@@ -11,3 +11,12 @@ queries.pageAll = () =>
       t.any(`SELECT * FROM items;`)
     ])
   );
+
+queries.pageAllActive = () => 
+  connection.db.task(t =>
+    t.batch([
+      t.any(`SELECT * FROM pages WHERE active = true`),
+      t.any(`SELECT * FROM sub_pages WHERE active = true`),
+      t.any(`SELECT * FROM items WHERE active = true`)
+    ])
+  );

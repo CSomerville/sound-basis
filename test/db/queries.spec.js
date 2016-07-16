@@ -16,8 +16,7 @@ describe('queries', () => {
   );
 
   describe('pageAll', () => {
-    it('should retrieve all data (including inactive)', (done) => {
-
+    it('should retrieve all data (including inactive)', done => {
 
       queries.pageAll()
         .then(data => {
@@ -30,6 +29,22 @@ describe('queries', () => {
         .catch(err => {
           done(err);
         });
+    });
+  });
+
+  describe('pageAllActive', () => {
+    it('should retrieve all active data', done => {
+
+      const isActive = row => row.active === true; 
+
+      queries.pageAllActive()
+        .then(data => {
+          expect(data[0].every(isActive)).to.equal(true);
+          expect(data[1].every(isActive)).to.equal(true);
+          expect(data[2].every(isActive)).to.equal(true);
+          done();
+        })
+        .catch(err => done(err)); 
     });
   });
 });
