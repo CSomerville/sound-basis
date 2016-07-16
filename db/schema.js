@@ -49,17 +49,10 @@ const runCreate = t =>
     t.none(str)
 ));
 
-module.exports = () =>
-  connection.db.task(runDelete)
-    .then(() => connection.db.task(runCreate))
-    .then(() => {
-      console.log('db reset');
-      connection.pgp.end();
-    })
-    .catch(err => {
-      console.log(err);
-      connection.pgp.end();
-    });
+module.exports = {
+  runCreate: runCreate,
+  runDelete: runDelete
+};
 
 
    

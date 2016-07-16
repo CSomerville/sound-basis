@@ -1,16 +1,10 @@
 const uuid = require('node-uuid');
 const faker = require('faker');
-const connection = require('./connection');
+const connection = require('../connection');
 const randomImages = require('./random-images');
+const statements = require('./statements');
 
 /* PAGES */
-
-const pageInsertStr = `
-  INSERT INTO pages
-  (id, name, has_sub_pages, active, position, created_at)
-  VALUES
-  ($1, $2, $3, $4, $5, $6);
-`;
 
 const pageData = Array(4).fill(1).map((el, i) => [
   uuid.v4(),
@@ -24,13 +18,6 @@ const pageData = Array(4).fill(1).map((el, i) => [
 
 /* SUB PAGES */
 
-const subPageInsertStr = `
-  INSERT INTO sub_pages
-  (id, page_id, name, active, photo_url, position, created_at)
-  VALUES
-  ($1, $2, $3, $4, $5, $6, $7);
-`;
-
 const subPageData = Array(10).fill(1).map((el, i) => [
   uuid.v4(),
   pageData[Math.min(Math.floor(i/3), 2)][0],
@@ -43,13 +30,6 @@ const subPageData = Array(10).fill(1).map((el, i) => [
 
 
 /* ITEMS */
-
-const itemInsertStr = `
-  INSERT INTO items
-  (id, parent_id, active, item_type, content, photo_url, position, created_at)
-  VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8);
-`;
 
 const itemData = Array(30).fill(1).map((el, i) => [
   uuid.v4(),
@@ -65,11 +45,11 @@ const itemData = Array(30).fill(1).map((el, i) => [
 
 const runInserts = t =>
   t.batch(pageData.map(el =>
-    t.none(pageInsertStr, el)
+    t.none(statements.pageInsertStr, el)
   ).concat(subPageData.map(el =>
-    t.none(subPageInsertStr, el)
+    t.none(statements.subPageInsertStr, el)
   )).concat(itemData.map(el =>
-    t.none(itemInsertStr, el)
+    t.none(statements.itemInsertStr, el)
   )));
 
 
