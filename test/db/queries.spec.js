@@ -168,5 +168,90 @@ describe('queries', () => {
         .catch(err => done(err));
     });
   });
+
+  describe('subPageUpdate', () => {
+    it('should use key value pairs to update columns', done => {
+      const seedId = '8b184605-e90a-4e20-85ad-fb0f9f0dcc44';
+      const toUpdate = {
+        name: 'Laurel Oak',
+        active: true,
+        photo_url: 'blarg'
+      };
+      
+      queries.subPageUpdate(seedId, toUpdate)
+        .then(() =>
+          connection.db.task(t =>
+            t.one(`SELECT * FROM sub_pages WHERE id = $1`, seedId)
+          )
+        )
+        .then(data => {
+          expect(data.name).to.equal(toUpdate.name);
+          expect(data.active).to.equal(toUpdate.active);
+          expect(data.updated_at).to.exist;
+          expect(data.photo_url).to.equal(toUpdate.photo_url);
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
+  
+  describe('subPageDelete', () => {
+    it('should delete sub_page and children (items)', done => {
+      const id = '8b184605-e90a-4e20-85ad-fb0f9f0dcc44';
+
+      queries.subPageDelete(id)
+        .then(() =>
+          connection.db.task(t =>
+            t.batch([
+              t.any(`SELECT * FROM sub_pages;`),
+              t.any(`SELECT * FROM items;`)
+            ])
+          )
+        )
+        .then(data => {
+          expect(data[0].length).to.equal(1);
+          expect(data[1].length).to.equal(4);
+          expect(data[0].every(el => el.id !== id)).to.be.true;
+          expect(data[1].every(el => el.parent_id !== id)).to.be.true;
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
+  
+  describe('itemCreate', () => {
+    it('should create new item row', done => {
+      
+      const newItem = {
+        id: uuid.v4(),
+        parent_id: '8b184605-e90a-4e20-85ad-fb0f9f0dcc44',
+        active: true,
+        item_type: 'image',
+        photo_url: 'blarg',
+        content: 'this is a thing',
+        position: 3
+      };
+
+      queries.itemCreate(newItem)
+        .then(() =>
+          connection.db.task(t =>
+            t.one(`SELECT * FROM items WHERE id = $1`, newItem.id)
+          )
+        )
+        .then(data => {
+          expect(data.id).to.equal(newItem.id);
+          expect(data.parent_id).to.equal(newItem.parent_id);
+          expect(data.active).to.equal(newItem.active);
+          expect(data.item_type).to.equal(newItem.item_type);
+          expect(data.photo_url).to.equal(newItem.photo_url);
+          expect(data.content).to.equal(newItem.content);
+          expect(data.position).to.equal(newItem.position);
+          expect(data.created_at).to.exist;
+          expect(data.updated_at).to.be.null;
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
 });
 
