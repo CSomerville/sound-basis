@@ -99,7 +99,7 @@ queries.subPageUpdate = (id, toUpdate) => {
 
   for (key in toUpdate) {
     assert(key in whiteListed,
-      `queries.pageUpdate does not have ${key} in whiteListed`);
+      `queries.subPageUpdate does not have ${key} in whiteListed`);
     assert.equal(typeof toUpdate[key], whiteListed[key],
       `${key} must be ${whiteListed[key]}`);
 
@@ -140,5 +140,48 @@ queries.itemCreate = newItem =>
       newItem.content, newItem.position
     ])
   );
+
+queries.itemUpdate = (id, toUpdate) => {
+  const whiteListed = {
+    parent_id: 'string',
+    name: 'string',
+    active: 'boolean',
+    position: 'number',
+    photo_url: 'string',
+    item_type: 'string',
+    content: 'string'
+  };
+
+  const keys = [];
+  const values = [];
+
+  for (key in toUpdate) {
+    assert(key in whiteListed,
+      `queries.itemUpdate does not have ${key} in whiteListed`);
+    assert.equal(typeof toUpdate[key], whiteListed[key],
+      `${key} must be ${whiteListed[key]}`);
+
+    keys.push(`${key}=$${keys.length + 1}`);
+    values.push(toUpdate[key]);
+  }
+
+  values.push(id);
+
+  const str = `
+    UPDATE items SET ${keys.join(', ')}
+    , updated_at = NOW()
+    WHERE id = $${keys.length + 1};
+  `;
+
+  return connection.db.task(t => 
+    t.none(str, values)
+  );
+}
+
+queries.itemDelete = id =>
+  connection.db.task(t =>
+    t.none(`DELETE FROM items WHERE id = $1`, id)
+  );
+
 
 

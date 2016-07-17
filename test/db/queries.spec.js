@@ -253,5 +253,52 @@ describe('queries', () => {
         .catch(err => done(err));
     });
   });
+
+  describe('itemUpdate', () => {
+    it('should use key value pairs to update rows', done => {
+
+      const id = '83bd4d28-3631-457c-a60f-bb8446a2dff5';
+      const toUpdate = {
+        position: 2,
+        content: 'squirrel food'
+      };
+
+      queries.itemUpdate(id, toUpdate)
+        .then(() => 
+          connection.db.task(t =>
+            t.one('SELECT * FROM items WHERE id = $1', id)
+          )
+        )
+        .then(data => {
+          expect(data.position).to.equal(toUpdate.position);
+          expect(data.content).to.equal(toUpdate.content);
+          expect(data.id).to.equal(id);
+          expect(data.updated_at).to.exist;
+          expect(data.item_type).to.equal('image');
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
+
+  describe('itemDelete', () => {
+    it('should delete item by id', done => {
+
+      const id = '83bd4d28-3631-457c-a60f-bb8446a2dff5';
+
+      queries.itemDelete(id)
+        .then(() =>
+          connection.db.task(t =>
+            t.any(`SELECT * FROM items;`)
+          )
+        )
+        .then(data => {
+          expect(data.length).to.equal(5);
+          expect(data.every(el => el.id !== id)).to.be.true;
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
 });
 
