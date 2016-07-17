@@ -125,12 +125,19 @@ describe('queries', () => {
       queries.pageDelete(seedId)
         .then(() =>
           connection.db.task(t =>
-            t.any(`SELECT * FROM pages;`)
+            t.batch([
+              t.any(`SELECT * FROM pages;`),
+              t.any(`SELECT * FROM sub_pages;`),
+              t.any(`SELECT * FROM items;`)
+            ])
           )
         )
         .then(data => {
-          expect(data.length).to.equal(1);
-          expect(data.every(el => el.id !== seedId)).to.equal(true);
+          expect(data[0].length).to.equal(1);
+          expect(data[0].every(el => el.id !== seedId)).to.be.true;
+          expect(data[1].length).to.equal(0);
+          expect(data[1].every(el => el.page_id !== seedId)).to.be.true;
+          expect(data[2].length).to.equal(2);
           done();
         })
         .catch(err => done(err));

@@ -63,12 +63,25 @@ queries.pageUpdate = (id, toUpdate) => {
 
   return connection.db.task(t => 
     t.none(str, values)
-  )
+  );
 }
 
 queries.pageDelete = id =>
   connection.db.task(t =>
-    t.none(`DELETE FROM pages WHERE id = $1`, id)
+    t.batch([
+      t.none(`DELETE FROM pages WHERE id = $1`, id),
+      t.any(`
+        DELETE FROM items
+        WHERE id IN (
+          SELECT items.id FROM sub_pages
+          INNER JOIN items
+          ON items.parent_id = sub_pages.id
+          WHERE sub_pages.page_id = $1
+        );
+        DELETE FROM sub_pages WHERE page_id = $1;
+       `, id)
+
+    ])
   );
 
 
