@@ -65,3 +65,22 @@ queries.pageUpdate = (id, toUpdate) => {
     t.none(str, values)
   )
 }
+
+queries.pageDelete = id =>
+  connection.db.task(t =>
+    t.none(`DELETE FROM pages WHERE id = $1`, id)
+  );
+
+
+queries.subPageCreate = newSubPage => 
+  connection.db.task(t =>
+    t.none(`
+      INSERT INTO sub_pages
+      (id, page_id, name, active, position, photo_url)
+      VALUES
+      ($1, $2, $3, $4, $5, $6);
+    `, [
+      newSubPage.id, newSubPage.page_id, newSubPage.name, newSubPage.active,
+      newSubPage.position, newSubPage.photo_url
+    ])
+  );

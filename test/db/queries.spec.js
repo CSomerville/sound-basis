@@ -117,5 +117,56 @@ describe('queries', () => {
         .catch(err => done(err));
     });
   });
+
+  describe('pageDelete', () => {
+    it('should delete page by id', done => {
+      const seedId = 'cec16e9c-db72-407a-926c-7901e0ab5c8e'
+
+      queries.pageDelete(seedId)
+        .then(() =>
+          connection.db.task(t =>
+            t.any(`SELECT * FROM pages;`)
+          )
+        )
+        .then(data => {
+          expect(data.length).to.equal(1);
+          expect(data.every(el => el.id !== seedId)).to.equal(true);
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
+
+  describe('subPageCreate', () => {
+    it('should create new sub page row', done => {
+      
+      const newSubPage = {
+        id: uuid.v4(),
+        page_id: 'cec16e9c-db72-407a-926c-7901e0ab5c8e',
+        name: 'bifurcation',
+        active: false,
+        position: 2,
+        photo_url: '',
+      };
+
+      queries.subPageCreate(newSubPage)
+        .then(() =>
+          connection.db.task(t =>
+            t.one(`SELECT * FROM sub_pages WHERE id = $1`, newSubPage.id)
+          )
+        )
+        .then(data => {
+          expect(data.id).to.equal(newSubPage.id);
+          expect(data.page_id).to.equal(newSubPage.page_id);
+          expect(data.name).to.equal(newSubPage.name);
+          expect(data.position).to.equal(newSubPage.position);
+          expect(data.active).to.equal(newSubPage.active);
+          expect(data.created_at).to.exist;
+          expect(data.updated_at).to.be.null;
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
 });
 
