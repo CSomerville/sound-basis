@@ -1,9 +1,9 @@
 const uuid = require('node-uuid');
 const expect = require('chai').expect;
-const connection = require('../../db/connection');
-const schema = require('../../db/schema');
-const testSeed = require('../../db/seed/test-seed');
-const queries = require('../../db/queries');
+const connection = require('../../src/db/connection');
+const schema = require('../../src/db/schema');
+const testSeed = require('../../src/db/seed/test-seed');
+const queries = require('../../src/db/queries');
 
 describe('queries', () => {
   beforeEach(done => 
