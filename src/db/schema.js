@@ -21,7 +21,7 @@ const createQueries = [`
   CREATE TABLE pages (
     id uuid PRIMARY KEY NOT NULL,
     name text NOT NULL,
-    has_sub_pages boolean DEFAULT TRUE,
+    has_sub_pages boolean NOT NULL,
     active boolean DEFAULT FALSE,
     created_at timestamp with time zone DEFAULT NOW(),
     updated_at timestamp with time zone,

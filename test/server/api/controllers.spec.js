@@ -26,7 +26,7 @@ describe('apiControllers', () => {
 
       const items = [];
       const queries = {
-        pagesAll: sinon.stub().resolves([
+        pageAll: sinon.stub().resolves([
           pages, subPages, items
         ])
       };
@@ -47,8 +47,8 @@ describe('apiControllers', () => {
       controllers.pagesIndex(req, res);
 
       setTimeout(() => {
-        expect(queries.pagesAll).to.have.been.calledOnce;
-        expect(queries.pagesAll).to.have.been.calledWith();
+        expect(queries.pageAll).to.have.been.calledOnce;
+        expect(queries.pageAll).to.have.been.calledWith();
         expect(sendSpy).to.have.been.calledOnce;
         expect(sendSpy).to.have.been.calledWith(expected);
         done();
@@ -57,7 +57,7 @@ describe('apiControllers', () => {
 
     it('should respond 500 on db error', done => {
       const queries = {
-        pagesAll: sinon.stub().rejects(new Error('syntax error you goon'))
+        pageAll: sinon.stub().rejects(new Error('syntax error you goon'))
       };
 
       const res = {
@@ -74,6 +74,306 @@ describe('apiControllers', () => {
         expect(sendSpy).to.have.been.calledWith(500);
         done();
       }, 0);
+    });
+  });
+
+  describe('pagesCreate', () => {
+    it('should send 200 on success', done => {
+      const queries = {
+        pageCreate: sinon.stub().resolves()
+      };
+      
+      const req = {
+        body: {
+          newPage: {
+            id: uuid.v4(),
+            name: 'Linden',
+            position: 0,
+            has_sub_pages: false
+          }
+        }
+      };
+      const res = {
+        send: function() {}
+      };
+
+      const sendSpy = sinon.spy(res, 'send');
+      const controllers = returnsControllers(queries);
+      controllers.pagesCreate(req, res);
+
+      setTimeout(() => {
+        expect(queries.pageCreate).to.have.been.calledOnce;
+        expect(queries.pageCreate).to.have.been.calledWith(req.body.newPage);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+
+    it('should validate for presence of id, name, position, has_sub_pages on req.body.newPage', () => {
+      const badReq1 = {
+        body: {
+          newPage: {
+            name: 'Linden',
+            position: 0,
+            has_sub_pages: false
+          }
+        }
+      };
+      const reqNoNewPage = { body: {} };
+
+      const res = {
+        send: function() {}
+      };
+      const sendSpy = sinon.spy(res, 'send');
+      const controllers = returnsControllers({});
+      
+      controllers.pagesCreate(badReq1, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+
+      sendSpy.reset();
+      controllers.pagesCreate(reqNoNewPage, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+    });
+
+    it('should respond 500 on db error', done => {
+      const queries = {
+        pageCreate: sinon.stub().rejects(new Error('syntax error you goon'))
+      };
+
+      const res = {
+        send: function() {}
+      };
+      const req = {
+        body: {
+          newPage: {
+            id: uuid.v4(),
+            name: 'Linden',
+            position: 0,
+            has_sub_pages: false
+          }
+        }
+      };
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.pagesCreate(req, res);
+
+      setTimeout(() => {
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(500);
+        done();
+      }, 0);
+    });
+  });
+  
+  describe('pagesUpdate', () => {
+    it('should call query with args and respon 200 on success', done => {
+      const queries = {
+        pageUpdate: sinon.stub().resolves()
+      };
+
+      const req = {
+        params: {
+          id: uuid.v4()
+        },
+        body: {
+          toUpdate: {
+            name: 'lil branch',
+            position: 2
+          }
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.pagesUpdate(req, res);
+
+      setTimeout(() => {
+        expect(queries.pageUpdate).to.have.been.calledOnce;
+        expect(queries.pageUpdate).to.have.been.calledWith(req.params.id, req.body.toUpdate);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+  });
+
+  describe('pagesDelete', () => {
+    it('should call query with req.params.id and respond 200 on success', done => {
+      const queries = {
+        pageDestroy: sinon.stub().resolves()
+      };
+
+      const req = {
+        params: {
+          id: uuid.v4()
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.pagesDestroy(req, res);
+
+      setTimeout(() => {
+        expect(queries.pageDestroy).to.have.been.calledOnce;
+        expect(queries.pageDestroy).to.have.been.calledWith(req.params.id);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+
+    it('should respond 400 if req.params.id is not present', () => {
+      const req1 = {
+        params: {}
+      };
+      const req2 = {
+        params: {
+          id: 'abe3',
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers({});
+      controllers.pagesDestroy(req1, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+
+      sendSpy.reset();
+      controllers.pagesDestroy(req2, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+
+    });
+  });
+  describe('subPagesCreate', () => {
+    it('should send 200 on success', done => {
+      const queries = {
+        subPageCreate: sinon.stub().resolves()
+      };
+
+      const req = {
+        body: {
+          newSubPage: {
+            id: uuid.v4(),
+            page_id: uuid.v4(),
+            name: 'big twig',
+            active: true,
+            photo_url: '',
+            position: 2
+          }
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.subPagesCreate(req, res);
+
+      setTimeout(() => {
+        expect(queries.subPageCreate).to.have.been.calledOnce;
+        expect(queries.subPageCreate).to.have.been.calledWith(req.body.newSubPage);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+
+    it('should send 500 on failure', done => {
+      const queries = {
+        subPageCreate: sinon.stub().rejects(new Error('db doesn\'t work'))
+      };
+
+      const req = {
+        body: {
+          newSubPage: {
+            id: uuid.v4(),
+            page_id: uuid.v4(),
+            name: 'big twig',
+            active: true,
+            photo_url: '',
+            position: 2
+          }
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.subPagesCreate(req, res);
+
+      setTimeout(() => {
+        expect(queries.subPageCreate).to.have.been.calledOnce;
+        expect(queries.subPageCreate).to.have.been.calledWith(req.body.newSubPage);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(500);
+        done();
+      }, 0);
+    });
+
+    it('should return status 400 on bad req.body.newSubPage', () => {
+      const badReq1 = {
+        body: {}
+      };
+      const badReq2 = {
+        body: {
+          newSubPage: {
+            id: uuid.v4(),
+            page_id: uuid.v4(),
+            name: 'big twig',
+            active: true,
+            photo_url: '',
+          }
+        }
+      };
+      const badReq3 = {
+        body: {
+          newSubPage: {
+            id: 'aef12',
+            page_id: uuid.v4(),
+            name: 'big twig',
+            active: true,
+            photo_url: '',
+            position: 2
+          }
+        }
+      };
+      
+      const res = { send: function() {} };
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers({});
+      controllers.subPagesCreate(badReq1, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+      sendSpy.reset();
+
+      controllers.subPagesCreate(badReq2, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+      sendSpy.reset();
+
+      controllers.subPagesCreate(badReq3, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
     });
   });
 });
