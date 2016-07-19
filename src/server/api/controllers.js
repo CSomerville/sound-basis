@@ -66,5 +66,60 @@ module.exports = queries => ({
     queries.subPageCreate(req.body.newSubPage)
       .then(() => res.send(200))
       .catch(err => res.send(500));
+  },
+
+  subPagesUpdate: function subPagesUpdate(req, res) {
+    queries.subPageUpdate(req.params.id, req.body.toUpdate)
+      .then(() => res.send(200))
+      .catch(err => res.send(500));
+  },
+
+  subPagesDestroy: function subPagesDestroy(req, res) {
+    const badInput = !req.params.id ||
+      !validator.isUUID(req.params.id);
+
+    if (badInput) return res.send(400);
+
+    queries.subPageDestroy(req.params.id)
+      .then(() => res.send(200))
+      .catch(err => res.send(500));
+  },
+
+  itemsCreate: function itemsCreate(req, res) {
+
+    const { newItem } = req.body;
+    const badInput = !newItem ||
+      typeof newItem.id !== 'string' ||
+      !validator.isUUID(newItem.id) ||
+      typeof newItem.parent_id !== 'string' ||
+      !validator.isUUID(newItem.parent_id) ||
+      typeof newItem.active !== 'boolean' ||
+      (newItem.item_type !== 'prose' && newItem.item_type !== 'image') ||
+      typeof newItem.position !== 'number' ||
+      typeof newItem.content !== 'string' ||
+      typeof newItem.photo_url !== 'string';
+
+    if (badInput) return res.send(400);
+
+    queries.itemCreate(req.body.newItem)
+      .then(() => res.send(200))
+      .catch(err => res.send(500));
+  },
+
+  itemsUpdate: function itemsUpdate(req, res) {
+    queries.itemUpdate(req.params.id, req.body.toUpdate)
+      .then(() => res.send(200))
+      .catch(err => res.send(500));
+  },
+
+  itemsDestroy: function itemsDestroy(req, res) {
+    const badInput = !req.params.id ||
+      !validator.isUUID(req.params.id);
+
+    if (badInput) return res.send(400);
+
+    queries.itemDestroy(req.params.id)
+      .then(() => res.send(200))
+      .catch(err => res.send(500));
   }
 });

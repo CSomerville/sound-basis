@@ -172,7 +172,7 @@ describe('apiControllers', () => {
   });
   
   describe('pagesUpdate', () => {
-    it('should call query with args and respon 200 on success', done => {
+    it('should call query with args and response 200 on success', done => {
       const queries = {
         pageUpdate: sinon.stub().resolves()
       };
@@ -205,7 +205,7 @@ describe('apiControllers', () => {
     });
   });
 
-  describe('pagesDelete', () => {
+  describe('pagesDestroy', () => {
     it('should call query with req.params.id and respond 200 on success', done => {
       const queries = {
         pageDestroy: sinon.stub().resolves()
@@ -259,6 +259,7 @@ describe('apiControllers', () => {
 
     });
   });
+
   describe('subPagesCreate', () => {
     it('should send 200 on success', done => {
       const queries = {
@@ -376,4 +377,308 @@ describe('apiControllers', () => {
       expect(sendSpy).to.have.been.calledWith(400);
     });
   });
+
+  describe('subPagesUpdate', () => {
+    it('should call query with args and response 200 on success', done => {
+      const queries = {
+        subPageUpdate: sinon.stub().resolves()
+      };
+
+      const req = {
+        params: {
+          id: uuid.v4()
+        },
+        body: {
+          toUpdate: {
+            name: 'lil branch',
+            position: 2
+          }
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.subPagesUpdate(req, res);
+
+      setTimeout(() => {
+        expect(queries.subPageUpdate).to.have.been.calledOnce;
+        expect(queries.subPageUpdate).to.have.been.calledWith(req.params.id, req.body.toUpdate);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+  });
+
+  describe('subPagesDestroy', () => {
+    it('should call query with req.params.id and respond 200 on success', done => {
+      const queries = {
+        subPageDestroy: sinon.stub().resolves()
+      };
+
+      const req = {
+        params: {
+          id: uuid.v4()
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.subPagesDestroy(req, res);
+
+      setTimeout(() => {
+        expect(queries.subPageDestroy).to.have.been.calledOnce;
+        expect(queries.subPageDestroy).to.have.been.calledWith(req.params.id);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+
+    it('should respond 400 if req.params.id is not present', () => {
+      const req1 = {
+        params: {}
+      };
+      const req2 = {
+        params: {
+          id: 'abe3',
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers({});
+      controllers.subPagesDestroy(req1, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+
+      sendSpy.reset();
+      controllers.subPagesDestroy(req2, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+
+    });
+  });
+ 
+  describe('itemsCreate', () => {
+    it('should send 200 on success', done => {
+      const queries = {
+        itemCreate: sinon.stub().resolves()
+      };
+
+      const req = {
+        body: {
+          newItem: {
+            id: uuid.v4(),
+            parent_id: uuid.v4(),
+            name: 'leaf',
+            active: true,
+            photo_url: '',
+            item_type: 'prose',
+            content: 'Leafy life',
+            position: 2
+          }
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.itemsCreate(req, res);
+
+      setTimeout(() => {
+        expect(queries.itemCreate).to.have.been.calledOnce;
+        expect(queries.itemCreate).to.have.been.calledWith(req.body.newItem);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+
+    it('should send 500 on failure', done => {
+      const queries = {
+        itemCreate: sinon.stub().rejects(new Error('db doesn\'t work'))
+      };
+
+      const req = {
+        body: {
+          newItem: {
+            id: uuid.v4(),
+            parent_id: uuid.v4(),
+            item_type: 'prose',
+            active: true,
+            photo_url: '',
+            content: 'Leafy life',
+            position: 2
+          }
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.itemsCreate(req, res);
+
+      setTimeout(() => {
+        expect(queries.itemCreate).to.have.been.calledOnce;
+        expect(queries.itemCreate).to.have.been.calledWith(req.body.newItem);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(500);
+        done();
+      }, 0);
+    });
+
+    it('should validate req.body.newItem and send 400 on bad input', () => {
+      const badReq1 = {
+        body: {}
+      };
+
+      const badReq2 = {
+        body: {
+          newItem: {
+            id: 'ae124',
+            parent_id: uuid.v4(),
+            item_type: 'prose',
+            active: true,
+            photo_url: '',
+            content: 'Leafy life',
+            position: 2
+          }
+        }
+      };
+
+      const badReq3 = {
+        body: {
+          newItem: {
+            id: uuid.v4(),
+            page_id: uuid.v4(),
+            item_type: 'prose',
+            photo_url: '',
+            position: 2
+          }
+        }
+      };
+      
+      const res = { send: function() {} };
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers({});
+      controllers.itemsCreate(badReq1, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+      sendSpy.reset();
+
+      controllers.itemsCreate(badReq2, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+      sendSpy.reset();
+
+      controllers.itemsCreate(badReq3, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+    });
+  });
+
+  describe('itemsUpdate', () => {
+    it('should call query with args and response 200 on success', done => {
+      const queries = {
+        itemUpdate: sinon.stub().resolves()
+      };
+
+      const req = {
+        params: {
+          id: uuid.v4()
+        },
+        body: {
+          toUpdate: {
+            content: 'lil branch',
+            position: 2
+          }
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.itemsUpdate(req, res);
+
+      setTimeout(() => {
+        expect(queries.itemUpdate).to.have.been.calledOnce;
+        expect(queries.itemUpdate).to.have.been.calledWith(req.params.id, req.body.toUpdate);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+  });
+
+  describe('itemsDestroy', () => {
+    it('should call query with req.params.id and respond 200 on success', done => {
+      const queries = {
+        itemDestroy: sinon.stub().resolves()
+      };
+
+      const req = {
+        params: {
+          id: uuid.v4()
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers(queries);
+      controllers.itemsDestroy(req, res);
+
+      setTimeout(() => {
+        expect(queries.itemDestroy).to.have.been.calledOnce;
+        expect(queries.itemDestroy).to.have.been.calledWith(req.params.id);
+        expect(sendSpy).to.have.been.calledOnce;
+        expect(sendSpy).to.have.been.calledWith(200);
+        done();
+      }, 0);
+    });
+
+    it('should respond 400 if req.params.id is not present', () => {
+      const req1 = {
+        params: {}
+      };
+      const req2 = {
+        params: {
+          id: 'abe3',
+        }
+      };
+
+      const res = { send: function() {}};
+      const sendSpy = sinon.spy(res, 'send');
+
+      const controllers = returnsControllers({});
+      controllers.itemsDestroy(req1, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+
+      sendSpy.reset();
+      controllers.itemsDestroy(req2, res);
+
+      expect(sendSpy).to.have.been.calledOnce;
+      expect(sendSpy).to.have.been.calledWith(400);
+
+    });
+  });
+ 
+
 });
