@@ -1,5 +1,6 @@
 const assert = require('assert');
 const connection = require('./connection');
+const { compare } = require('./bcrypt-promisifications');
 
 const queries = {};
 module.exports = queries;
@@ -196,5 +197,23 @@ queries.itemDelete = id =>
     t.none(`DELETE FROM items WHERE id = $1`, id)
   );
 
-
-
+queries.adminLogin = admin => {
+  let final;
+  return connection.db.task(t =>
+    t.one(`SELECT * FROM admins WHERE email = $1`, admin.email)
+  )
+    .then(data => {
+      final = {
+        id: data.id,
+        username: data.username
+      };
+      return compare(admin.password, data.password)
+    })
+    .then(res => {
+      if (res) {
+        return final;
+      } else {
+        throw new Error('password does not match.');
+      }
+    });
+} 

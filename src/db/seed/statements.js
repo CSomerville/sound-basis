@@ -18,5 +18,12 @@ module.exports = {
     (id, parent_id, active, item_type, content, photo_url, position, created_at)
     VALUES
     ($1, $2, $3, $4, $5, $6, $7, $8);
-  `
+  `,
+
+  adminInsertStr: `
+    INSERT INTO admins
+    (id, username, email, password)
+    VALUES
+    ($1, $2, $3, $4);
+  ` 
 };

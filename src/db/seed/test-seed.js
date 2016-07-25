@@ -1,6 +1,9 @@
 const connection = require('../connection');
 const statements = require('./statements');
 const uuid = require('node-uuid');
+const { genSalt, hash } = require('../bcrypt-promisifications');
+
+const adminId = '707286cb-e30a-41d8-95ef-070a97af1016';
 
 const pageIds = [
   'cec16e9c-db72-407a-926c-7901e0ab5c8e',
@@ -117,14 +120,27 @@ const itemData = [[
   new Date('July 5, 2016')
 ]];
 
+const adminData = [[
+  adminId,
+  'CSomerville',
+  'colby.somerville@gmail.com',
+  ',KObp_@Kg.`6sKp(tZcd'
+]];
+
 const runInserts = t => 
-  pageData.map(el =>
+  t.batch(adminData.map(admin =>
+    genSalt()
+      .then(salt => hash(admin[3], salt))
+      .then(pass =>
+        t.none(statements.adminInsertStr, [...admin.slice(0, 3), pass, ...admin.slice(4)])
+      )
+  ).concat(pageData.map(el =>
     t.none(statements.pageInsertStr, el)
-  ).concat(subPageData.map(el =>
+  )).concat(subPageData.map(el =>
     t.none(statements.subPageInsertStr, el)
   )).concat(itemData.map(el =>
     t.none(statements.itemInsertStr, el)
-  ));
+  )));
 
 const testSeed = () => 
   connection.db.task(runInserts)

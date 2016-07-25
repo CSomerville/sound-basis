@@ -1,9 +1,13 @@
 const uuid = require('node-uuid');
-const expect = require('chai').expect;
+const chai = require('chai');
+const { expect } = chai;
+const chaiAsPromised = require('chai-as-promised');
 const connection = require('../../src/db/connection');
 const schema = require('../../src/db/schema');
 const testSeed = require('../../src/db/seed/test-seed');
 const queries = require('../../src/db/queries');
+
+chai.use(chaiAsPromised);
 
 describe('queries', () => {
   beforeEach(done => 
@@ -307,5 +311,39 @@ describe('queries', () => {
         .catch(err => done(err));
     });
   });
+
+  describe('adminLogin', () => {
+    it('should compare password and return id, username', done => {
+      const admin = {
+        email: 'colby.somerville@gmail.com',
+        password: ',KObp_@Kg.`6sKp(tZcd'
+      };
+      const expected = {
+        id: '707286cb-e30a-41d8-95ef-070a97af1016',
+        username: 'CSomerville'
+      };
+
+      queries.adminLogin(admin)
+        .then(data => {
+          expect(data).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+    });
+
+    it('should throw if password does not match', done => {
+      const admin = {
+        email: 'colby.somerville@gmail.com',
+        password: ',KObp_@Kg.`6sKp(tZc'
+      };
+
+
+      return expect(queries.adminLogin(admin))
+        .to.eventually.be.rejectedWith(Error, "password does not match.")
+        .notify(done);
+
+   }); 
+  });
+
 });
 
