@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import camelize from 'camelize';
 
 const base = '/api'
 
@@ -7,7 +8,8 @@ export function getApi(urlFrag) {
 
   return fetch(url)
     .then(checkStatus)
-    .then(res => res.json());
+    .then(res => res.json())
+    .then(parsed => camelize(parsed));
 }
 
 function checkStatus(res) {

@@ -3,7 +3,6 @@ import NavAnchor from './NavAnchor';
 
 export default class NavBar extends Component {
   render() {
-    console.log(this.props);
     const { navChildren } = this.props;
     return (
       <nav>

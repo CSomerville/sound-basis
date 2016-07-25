@@ -10,23 +10,39 @@ class Page extends Component {
       pagesData
     } = this.props;
 
-    const page = find(pagesData.pages, { 'id': routeParams.id });
+    const page = find(pagesData.pages, { 'id': routeParams.pageId });
 
     let pageChildren;
     if (page.hasSubPages) {
-      pageChildren = pagesData.subPages.filter(el => el.pageId == page.id);
+      pageChildren = pagesData.subPages.filter(el => el.pageId === page.id);
     } else {
-      pageChildren = pagesData.items.filter(el => el.parentId = page.id);
+      pageChildren = pagesData.items.filter(el => el.parentId === page.id);
     }
 
     return (
-      <div>page</div>
+      (page.hasSubPages)
+      ?
+      <div>
+        {pageChildren.map((el, i) =>
+          <div key={i}>
+            {el.name}
+          </div>
+        )}
+      </div>
+      :
+      <div>
+        {pageChildren.map((el, i) =>
+          <div key={i}>
+            {el.itemType}
+          </div>
+        )}
+      </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  pagesData: state.pagesData
+  pagesData: state.pageData
 });
 
 const mapDispatchToProps = dispatch => ({
