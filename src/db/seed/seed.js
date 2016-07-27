@@ -23,7 +23,7 @@ const adminData = [[
 const pageData = Array(4).fill(1).map((el, i) => [
   uuid.v4(),
   faker.lorem.word(),
-  (i % 3 == 0) ? false : true,
+  ((i+1) % 4 == 0) ? false : true,
   (i % 2 == 0) ? true : false,
   i,
   faker.date.between(new Date('Jan 1 2016'), new Date('Mar 30 2016'))
