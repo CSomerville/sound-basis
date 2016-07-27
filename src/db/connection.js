@@ -5,7 +5,6 @@ const db = (function() {
     case 'development':
       return pgp(process.env.DEV_DATABASE_URL);
     case 'test':
-      console.log('in here');
       return pgp(process.env.TEST_DATABASE_URL);
     case 'production':
       return pgp(process.env.PROD_DATABASE_URL);

@@ -342,8 +342,7 @@ describe('queries', () => {
         .to.eventually.be.rejectedWith(Error, "password does not match.")
         .notify(done);
 
-   }); 
+    }); 
   });
-
 });
 

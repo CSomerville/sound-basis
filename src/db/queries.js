@@ -217,3 +217,8 @@ queries.adminLogin = admin => {
       }
     });
 } 
+
+queries.adminById = id =>
+  connection.db.task(t =>
+    t.one(`SELECT username, id FROM admins WHERE id = $1`, id)
+  );

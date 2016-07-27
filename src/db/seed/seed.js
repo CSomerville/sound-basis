@@ -3,6 +3,20 @@ const faker = require('faker');
 const connection = require('../connection');
 const randomImages = require('./random-images');
 const statements = require('./statements');
+const { genSalt, hash } = require('../bcrypt-promisifications');
+
+
+/* ADMIN */
+
+const adminId = '707286cb-e30a-41d8-95ef-070a97af1016';
+
+const adminData = [[
+  adminId,
+  'CSomerville',
+  'colby.somerville@gmail.com',
+  ',KObp_@Kg.`6sKp(tZcd'
+]];
+
 
 /* PAGES */
 
@@ -44,9 +58,15 @@ const itemData = Array(30).fill(1).map((el, i) => [
   
 
 const runInserts = t =>
-  t.batch(pageData.map(el =>
+  t.batch(adminData.map(admin =>
+    genSalt()
+      .then(salt => hash(admin[3], salt))
+      .then(pass =>
+        t.none(statements.adminInsertStr, [...admin.slice(0, 3), pass, ...admin.slice(4)])
+      )
+  ).concat(pageData.map(el =>
     t.none(statements.pageInsertStr, el)
-  ).concat(subPageData.map(el =>
+  )).concat(subPageData.map(el =>
     t.none(statements.subPageInsertStr, el)
   )).concat(itemData.map(el =>
     t.none(statements.itemInsertStr, el)
