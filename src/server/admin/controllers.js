@@ -8,6 +8,11 @@ module.exports = {
 
   loginIndex: (req, res) => {
     return res.sendFile(join(__dirname, '/../views/admin-login.html'));
+  },
+
+  loginDestroy: (req, res) => {
+    req.logout();
+    res.redirect('/login');
   }
 }
 

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import find from 'lodash/find';
+import SubPageIndex from './SubPageIndex';
 
 class Page extends Component {
   render() {
@@ -12,23 +13,23 @@ class Page extends Component {
 
     const page = find(pagesData.pages, { 'id': routeParams.pageId });
 
+    if (!page) {
+      return (
+        <div>loading...</div>
+      );
+    }
+
     let pageChildren;
-    if (page.hasSubPages) {
-      pageChildren = pagesData.subPages.filter(el => el.pageId === page.id);
-    } else {
+    if (!page.hasSubPages) {
       pageChildren = pagesData.items.filter(el => el.parentId === page.id);
     }
 
     return (
       (page.hasSubPages)
       ?
-      <div>
-        {pageChildren.map((el, i) =>
-          <div key={i}>
-            {el.name}
-          </div>
-        )}
-      </div>
+      <SubPageIndex
+        pageId={routeParams.pageId}
+        />
       :
       <div>
         {pageChildren.map((el, i) =>
