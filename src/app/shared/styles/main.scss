@@ -1,0 +1,30 @@
+@import '../../../../node_modules/normalize.css/normalize.css';
+@import 'globals';
+
+nav ul {
+  display: flex;
+}
+
+nav ul li {
+  list-decoration: none;
+  flex-grow: 1;
+  display: block;
+  text-align: center;
+}
+
+.sub-page-index {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.sub-page-index .sub-page {
+  width: 100%;
+
+  @media (min-width: $medium-screen-min) {
+    width: 50%;
+  }
+
+  @media (min-width: $large-screen-min) {
+    width: 25%;
+  }
+}

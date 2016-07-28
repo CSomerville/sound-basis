@@ -10,10 +10,13 @@ class SubPageIndex extends Component {
 
     const subPages = allSubPages.filter(SP => SP.pageId === pageId); 
 
+    console.log(subPages);
     return (
-      <div>
+      <div className="sub-page-index">
         {subPages.map(subPage =>
-          <div key={subPage.id}>
+          <div
+            className="sub-page" 
+            key={subPage.id}>
             {subPage.name}
           </div>
         )}

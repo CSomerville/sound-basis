@@ -11,9 +11,9 @@ passport.deserializeUser((id, done) =>
     .then(user => done(null, user))
     .catch(err => done(err))
 );
-console.log('in here');
+
 passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => 
-  
+    
   queries.adminLogin({
     email: email,
     password: password

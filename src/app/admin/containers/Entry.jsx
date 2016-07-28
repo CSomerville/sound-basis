@@ -11,14 +11,17 @@ class Entry extends Component {
   }
 
   render() {
+
     const { 
       pages,
       children 
     } = this.props;
+
     const pagesForNav = sortBy(pages, (page => page.position)).map(page => ({
       url: `/admin/pages/${page.id}`,
       copy: page.name
     }));
+
     return (
       <div>
         <NavBar

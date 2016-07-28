@@ -337,7 +337,6 @@ describe('queries', () => {
         password: ',KObp_@Kg.`6sKp(tZc'
       };
 
-
       return expect(queries.adminLogin(admin))
         .to.eventually.be.rejectedWith(Error, "password does not match.")
         .notify(done);
