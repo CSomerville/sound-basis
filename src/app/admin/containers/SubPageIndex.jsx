@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import SubPage from '../../shared/components/SubPage';
 
 class SubPageIndex extends Component {
   render() {
@@ -10,15 +11,15 @@ class SubPageIndex extends Component {
 
     const subPages = allSubPages.filter(SP => SP.pageId === pageId); 
 
-    console.log(subPages);
     return (
       <div className="sub-page-index">
         {subPages.map(subPage =>
-          <div
-            className="sub-page" 
-            key={subPage.id}>
-            {subPage.name}
-          </div>
+          <SubPage
+            key={subPage.id}
+            id={subPage.id}
+            imageSrc={subPage.photoUrl}
+            name={subPage.name}
+            />
         )}
       </div>
     );

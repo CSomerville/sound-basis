@@ -1,0 +1,50 @@
+%card {
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  padding: 0;
+  transition: all .3s ease;
+
+  > * {
+    max-width: 100%;
+    display: block;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  header,
+  section,
+  > p {
+    padding: .6em .8em;
+  }
+
+  section {
+    padding: .6em .8em 0;
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background-color: #eee; // fix this dummy
+  }
+
+  header {
+    font-weight: bold;
+    position: relative;
+    border-bottom: 1px solid #eee; // and here
+
+    h1, h2, h3, h4, h5, h6 {
+      padding: 0;
+      margin: 0 2em 0 0;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: text-bottom;
+    }
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}

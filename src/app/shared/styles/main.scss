@@ -1,8 +1,10 @@
 @import '../../../../node_modules/normalize.css/normalize.css';
 @import 'globals';
+@import 'card';
 
 nav ul {
   display: flex;
+  padding-left: 0;
 }
 
 nav ul li {
@@ -17,14 +19,44 @@ nav ul li {
   flex-wrap: wrap;
 }
 
+.card {
+  @extend %card;
+
+  .holds-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    max-height: 20em;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
 .sub-page-index .sub-page {
   width: 100%;
 
   @media (min-width: $medium-screen-min) {
-    width: 50%;
+    margin-right: 20px;
+    width: calc(50% - 10px);
+
+    &:nth-child(2n) {
+      margin-right: 0;
+    }
   }
 
   @media (min-width: $large-screen-min) {
-    width: 25%;
+    margin-right: 20px;
+    width: calc(25% - 15px);
+
+    &:nth-child(2n) {
+      margin-right: 20px;
+    }
+    &:nth-child(4n) {
+      margin-right: 0;
+    }
   }
 }
