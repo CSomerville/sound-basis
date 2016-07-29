@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const returnsControllers = require('./controllers');
 const queries = require('../../db/queries');
+const { isAuthenticatedAJAX } = require('../passport-config');
 
 const apiRouter = express.Router();
 module.exports = apiRouter;
@@ -9,6 +10,7 @@ module.exports = apiRouter;
 const controllers = returnsControllers(queries);
 
 apiRouter.use(bodyParser.json());
+apiRouter.use(isAuthenticatedAJAX);
 
 apiRouter.get('/pages', controllers.pagesIndex);
 

@@ -32,5 +32,12 @@ module.exports = {
       return next();
     }
     res.redirect('/admin/login');
+  },
+
+  isAuthenticatedAJAX: (req, res, next) => {
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    return res.send(401);
   }
 };

@@ -4,10 +4,19 @@ const deleteQueries = [
   `DROP TABLE IF EXISTS items CASCADE;`,
   `DROP TABLE IF EXISTS pages CASCADE;`,
   `DROP TABLE IF EXISTS sub_pages CASCADE;`,
-  `DROP TABLE IF EXISTS admins CASCADE;`
+  `DROP TABLE IF EXISTS admins CASCADE;`,
+  `DROP TABLE IF EXISTS pages_locked CASCADE`
 ];
 
 const createQueries = [`
+  CREATE TABLE admins (
+    id uuid PRIMARY KEY NOT NULL,
+    email text NOT NULL,
+    username text NOT NULL,
+    password text NOT NULL,
+    created_at timestamp with time zone DEFAULT NOW(),
+    updated_at timestamp with time zone
+  );`,`
   CREATE TABLE items (
     id uuid PRIMARY KEY NOT NULL,
     parent_id uuid NOT NULL,
@@ -37,14 +46,10 @@ const createQueries = [`
     created_at timestamp with time zone DEFAULT NOW(),
     updated_at timestamp with time zone,
     position integer NOT NULL
-  );`, `
-  CREATE TABLE admins (
-    id uuid PRIMARY KEY NOT NULL,
-    email text NOT NULL,
-    username text NOT NULL,
-    password text NOT NULL,
-    created_at timestamp with time zone DEFAULT NOW(),
-    updated_at timestamp with time zone
+  );`,`
+  CREATE TABLE pages_locked (
+    locked_at timestamp with time zone,
+    locked_by uuid REFERENCES admins (id)
   );
 `];
 

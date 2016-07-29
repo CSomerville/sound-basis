@@ -222,3 +222,22 @@ queries.adminById = id =>
   connection.db.task(t =>
     t.one(`SELECT username, id FROM admins WHERE id = $1`, id)
   );
+
+queries.arePagesLocked = () =>
+  connection.db.task(t =>
+    t.one(`SELECT * FROM pages_locked;`)
+  )
+
+queries.lockPages = adminId =>
+  connection.db.task(t =>
+    t.none(`UPDATE pages_locked SET locked_at = NOW(), admin_id = $1`, adminId)
+  );
+
+queries.unlockPages = adminId =>
+  connection.db.task(t =>
+    t.none(`
+      UPDATE pages_locked 
+      SET locked_at = NULL, admin_id = NULL
+      WHERE admin_id = $1
+    `, adminId)
+  );
