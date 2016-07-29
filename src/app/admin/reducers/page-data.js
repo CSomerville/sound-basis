@@ -1,5 +1,4 @@
 export default (state = makeDefaults(), action) => {
-  console.log(action);
   switch (action.type) {
     case 'FETCH_PAGES_INDEX_SUCCESS':
       return Object.assign({}, state, {
