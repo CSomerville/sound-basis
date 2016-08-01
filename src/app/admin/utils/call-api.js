@@ -1,3 +1,5 @@
+import { browserHistory } from 'react-router';
+
 export default function callAPI({ dispatch, getState }) {
 
   return next => action => {
@@ -39,8 +41,7 @@ export default function callAPI({ dispatch, getState }) {
       })
       .catch(err => {
         if (err.res && err.res.status === 401) {
-          console.log(err);
-          // TO DO -- User is not authenticated
+          browserHistory.push('/admin/login');
         } else {
           dispatch(Object.assign({}, payload, {
             err,

@@ -16,26 +16,23 @@ export function getApi(urlFrag) {
 
 export function postApi(urlFrag, body = {}) {
   const url = base + urlFrag;
-  
-  return fetch(url, {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  })
-    .then(checkStatus)
-    .then(res => res.json())
-    .then(parsed => camelize(parsed));
+  return generalFetch(url, body, 'POST');  
 }
 
 export function putApi(urlFrag, body = {}) {
   const url = base + urlFrag;
-  
+  return generalFetch(url, body, 'PUT');
+}
+
+export function deleteApi(urlFrag, body = {}) {
+  const url = base + urlFrag;
+  return generalFetch(url, body, 'DELETE');
+}
+
+
+function generalFetch(url, body, method) {
   return fetch(url, {
-    method: 'PUT',
+    method: method,
     credentials: 'same-origin',
     headers: {
       'Accept': 'application/json',
@@ -46,6 +43,7 @@ export function putApi(urlFrag, body = {}) {
     .then(checkStatus)
     .then(res => res.json())
     .then(parsed => camelize(parsed));
+
 }
 
 

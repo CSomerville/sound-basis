@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import find from 'lodash/find';
+import { browserHistory } from 'react-router';
 import SubPageIndex from './SubPageIndex';
 import NavBar from '../../shared/components/NavBar';
 import { fetchEditPages } from '../actions/page';
@@ -64,7 +65,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  editPages: (() => dispatch(fetchEditPages()))
+  editPages: () => {
+    dispatch(fetchEditPages());
+    browserHistory.push('/admin/edit-pages');
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Page);
