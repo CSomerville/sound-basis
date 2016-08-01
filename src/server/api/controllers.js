@@ -127,10 +127,10 @@ module.exports = queries => ({
 
     queries.arePagesLocked()
       .then(data => {
-        if (!data[0] || 
-          data[0].locked_by === req.session.passport.user ||
+        if (!data.active || 
+          data.locked_by === req.session.passport.user ||
           new Date() - data[0].locked_at > 1000 * 60 * 5) {
-          console.log('this is happenining');
+
           queries.lockPages(req.session.passport.user)
             .then(() => res.send(200))
             .catch(err => { console.log(err); res.send(500) });
@@ -140,5 +140,9 @@ module.exports = queries => ({
         }
       })
       .catch(err => { console.log(err) ; res.send(500) });
+  },
+
+  pagesLockedDelete: function pagesLockedDelete(req, res) {
+
   }
 });
