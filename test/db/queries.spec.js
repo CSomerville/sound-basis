@@ -343,5 +343,54 @@ describe('queries', () => {
 
     }); 
   });
+
+  describe('arePagesLocked', done => {
+    it('should retrieve last record', done => {
+      const adminId = '707286cb-e30a-41d8-95ef-070a97af1016';
+      queries.arePagesLocked()
+        .then(data => {
+          expect(data.locked_by).to.equal(adminId);
+          expect(data.locked_at > (new Date() - 10000)).to.be.true;
+          expect(data.active).to.equal(true);
+          done();
+        })
+        .catch(err => done(err));
+    });
+
+    it('should recover if there are no records', done => {
+      connection.db.task(t =>
+        t.none('DELETE FROM pages_locked')
+      ).then(() => 
+        queries.arePagesLocked()
+      ).catch(err => done(err));
+    });
+  });
+
+  describe('lockPages', () => {
+    it('should insert new row', done => {
+      const adminId = 'e6aa9a1f-b47d-4092-965b-68225b731970';
+
+      queries.lockPages(adminId)
+        .then(() => queries.arePagesLocked())
+        .then(data => {
+          expect(data.locked_by).to.equal(adminId);
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
+
+  describe('unlockPages', () => {
+    it('should set active of last row to false', done => {
+      
+      queries.unlockPages()
+        .then(() => queries.arePagesLocked())
+        .then(data => {
+          expect(data.active).to.be.false;
+          done();
+        })
+        .catch(err => done(err));
+    });
+  });
 });
 

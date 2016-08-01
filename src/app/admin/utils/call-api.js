@@ -39,6 +39,7 @@ export default function callAPI({ dispatch, getState }) {
       })
       .catch(err => {
         if (err.res && err.res.status === 401) {
+          console.log(err);
           // TO DO -- User is not authenticated
         } else {
           dispatch(Object.assign({}, payload, {

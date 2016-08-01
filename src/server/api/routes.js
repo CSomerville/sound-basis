@@ -25,3 +25,6 @@ apiRouter.delete('/sub-pages/:id', controllers.subPagesDestroy);
 apiRouter.post('/items', controllers.itemsCreate);
 apiRouter.put('/items/:id', controllers.itemsUpdate);
 apiRouter.delete('/items/:id', controllers.itemsDestroy);
+
+apiRouter.put('/pages-locked', controllers.pagesLockedUpdate);
+apiRouter.delete('/pages-locked', controllers.pagesLockedDelete);

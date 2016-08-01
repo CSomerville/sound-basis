@@ -19,7 +19,7 @@ class Entry extends Component {
 
     const pagesForNav = sortBy(pages, (page => page.position)).map(page => ({
       url: `/admin/pages/${page.id}`,
-      copy: page.name
+      copy: `${page.name} (${(page.active) ? 'active' : 'inactive'})` 
     }));
 
     return (

@@ -121,5 +121,24 @@ module.exports = queries => ({
     queries.itemDestroy(req.params.id)
       .then(() => res.send(200))
       .catch(err => res.send(500));
+  },
+
+  pagesLockedUpdate: function pagesLockedUpdate(req, res) {
+
+    queries.arePagesLocked()
+      .then(data => {
+        if (!data[0] || 
+          data[0].locked_by === req.session.passport.user ||
+          new Date() - data[0].locked_at > 1000 * 60 * 5) {
+          console.log('this is happenining');
+          queries.lockPages(req.session.passport.user)
+            .then(() => res.send(200))
+            .catch(err => { console.log(err); res.send(500) });
+
+        } else {
+          res.status(401).send({ message: 'another admin is editing the pages now.' });      
+        }
+      })
+      .catch(err => { console.log(err) ; res.send(500) });
   }
 });

@@ -49,7 +49,8 @@ const createQueries = [`
   );`,`
   CREATE TABLE pages_locked (
     locked_at timestamp with time zone,
-    locked_by uuid REFERENCES admins (id)
+    locked_by uuid REFERENCES admins (id),
+    active boolean DEFAULT TRUE
   );
 `];
 

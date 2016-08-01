@@ -3,7 +3,8 @@ const statements = require('./statements');
 const uuid = require('node-uuid');
 const { genSalt, hash } = require('../bcrypt-promisifications');
 
-const adminId = '707286cb-e30a-41d8-95ef-070a97af1016';
+const adminId1 = '707286cb-e30a-41d8-95ef-070a97af1016';
+const adminId2 = 'e6aa9a1f-b47d-4092-965b-68225b731970';
 
 const pageIds = [
   'cec16e9c-db72-407a-926c-7901e0ab5c8e',
@@ -120,12 +121,36 @@ const itemData = [[
   new Date('July 5, 2016')
 ]];
 
+/* ADMIN DATA */
+
 const adminData = [[
-  adminId,
+  adminId1,
   'CSomerville',
   'colby.somerville@gmail.com',
   ',KObp_@Kg.`6sKp(tZcd'
+], [
+  adminId2,
+  'unktronic',
+  'unk.tronia@gmail.com',
+  'badAtpassw0rds'
 ]];
+
+/* PAGES_LOCKED DATA */
+
+const pagesLockedData = [[
+  new Date('July 17, 2016'),
+  adminId1,
+  false
+], [
+  new Date('July 23, 2016'),
+  adminId2,
+  false
+], [
+  new Date(),
+  adminId1,
+  true
+]];
+
 
 const runInserts = t => 
   t.batch(adminData.map(admin =>
@@ -134,13 +159,18 @@ const runInserts = t =>
       .then(pass =>
         t.none(statements.adminInsertStr, [...admin.slice(0, 3), pass, ...admin.slice(4)])
       )
-  ).concat(pageData.map(el =>
-    t.none(statements.pageInsertStr, el)
-  )).concat(subPageData.map(el =>
-    t.none(statements.subPageInsertStr, el)
-  )).concat(itemData.map(el =>
-    t.none(statements.itemInsertStr, el)
-  )));
+  ))
+  .then(() =>
+    t.batch(pageData.map(el =>
+      t.none(statements.pageInsertStr, el)
+    ).concat(subPageData.map(el =>
+      t.none(statements.subPageInsertStr, el)
+    )).concat(itemData.map(el =>
+      t.none(statements.itemInsertStr, el)
+    )).concat(pagesLockedData.map(el =>
+      t.none(statements.pagesLockedInsertStr, el)
+    )))
+  );
 
 const testSeed = () => 
   connection.db.task(runInserts)

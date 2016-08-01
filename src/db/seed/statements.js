@@ -25,5 +25,12 @@ module.exports = {
     (id, username, email, password)
     VALUES
     ($1, $2, $3, $4);
+  `,
+
+  pagesLockedInsertStr: `
+    INSERT INTO pages_locked
+    (locked_at, locked_by, active)
+    VALUES
+    ($1, $2, $3);
   ` 
 };

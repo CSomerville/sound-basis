@@ -8,9 +8,9 @@ module.exports = queries;
 queries.pageAll = () =>
   connection.db.task(t =>
     t.batch([
-      t.any(`SELECT * FROM pages;`),
-      t.any(`SELECT * FROM sub_pages;`),
-      t.any(`SELECT * FROM items;`)
+      t.any(`SELECT * FROM pages ORDER BY position;`),
+      t.any(`SELECT * FROM sub_pages ORDER BY position;`),
+      t.any(`SELECT * FROM items ORDER BY position;`)
     ])
   );
 
@@ -225,19 +225,23 @@ queries.adminById = id =>
 
 queries.arePagesLocked = () =>
   connection.db.task(t =>
-    t.one(`SELECT * FROM pages_locked;`)
+    t.one(`SELECT * FROM pages_locked ORDER BY locked_at DESC LIMIT 1;`)
   )
 
 queries.lockPages = adminId =>
   connection.db.task(t =>
-    t.none(`UPDATE pages_locked SET locked_at = NOW(), admin_id = $1`, adminId)
+    t.none(`INSERT INTO pages_locked (locked_at, locked_by) VALUES (NOW(), $1);`, adminId)
   );
 
 queries.unlockPages = adminId =>
   connection.db.task(t =>
     t.none(`
       UPDATE pages_locked 
-      SET locked_at = NULL, admin_id = NULL
-      WHERE admin_id = $1
+      SET active = FALSE
+      WHERE locked_at IN (
+        SELECT locked_at FROM pages_locked
+        ORDER BY locked_at DESC
+        LIMIT 1
+      );
     `, adminId)
   );
