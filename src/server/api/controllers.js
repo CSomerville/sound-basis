@@ -139,7 +139,15 @@ module.exports = queries => ({
           res.status(401).send({ message: 'another admin is editing the pages now.' });      
         }
       })
-      .catch(err => { console.log(err) ; res.send(500) });
+      .catch(err => { 
+        if (err.message === 'No data returned from the query.') {
+          queries.lockPages(req.session.passport.user)
+            .then(() => res.send(200))
+            .catch(err => { console.log(err); res.send(500) });
+        } else {
+          console.log(err) ; res.send(500) 
+        }
+      });
   },
 
   pagesLockedDelete: function pagesLockedDelete(req, res) {
