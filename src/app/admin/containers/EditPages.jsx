@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import NavBar from '../../shared/components/NavBar';
-import { fetchUnlockPages } from '../actions/edit-pages';
+import PageToEdit from '../components/PageToEdit';
+import { 
+  fetchUnlockPages,
+  editPageName
+} from '../actions/edit-pages';
 
 class EditPages extends Component {
   render() {
@@ -10,7 +14,8 @@ class EditPages extends Component {
     const {
       fetchUnlockPages,
       editPagesGUI,
-      pages
+      pages,
+      editPageName
     } = this.props;
 
     const toolBarConfig = [{
@@ -31,9 +36,11 @@ class EditPages extends Component {
           />
         <div>
           {pages.map(page =>
-            <div key={page.id}>
-              {page.name}
-            </div>
+            <PageToEdit key={page.id}
+              page={page}
+              editPageName={editPageName}
+              canEditName={editPagesGUI.nameEditable.includes(page.id)}
+              />
             )}
           </div>
       </div>
@@ -50,7 +57,8 @@ const mapDispatchToProps = dispatch => ({
   fetchUnlockPages: () => {
     dispatch(fetchUnlockPages());
     browserHistory.push('/admin');
-  }
+  },
+  editPageName: (id => dispatch(editPageName(id)))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPages);
