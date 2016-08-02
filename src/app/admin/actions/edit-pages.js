@@ -7,11 +7,15 @@ export const fetchUnlockPages = () => ({
 
 export const fetchDeletePage = id => ({
   types: ['FETCH_DELETE_PAGE', 'FETCH_DELETE_PAGE_SUCCESS', 'FETCH_DELETE_PAGE_FAILURE'],
-  call: () => deleteApi(`/pages/${id}`, {})
+  call: () => deleteApi(`/pages/${id}`, {}),
+  payload: {
+    id: id
+  }
 });
 
-export const cancelEditPages = () => ({
-  type: 'CANCEL_EDIT_PAGES'
+export const cancelEditPage = id => ({
+  type: 'CANCEL_EDIT_PAGE',
+  id: id
 });
 
 export const updatePageName = (id, name) => ({

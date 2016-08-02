@@ -1,4 +1,9 @@
+import findIndex from 'lodash/findIndex';
+
 export default (state = makeDefaults(), action) => {
+
+  let index;
+
   switch(action.type) {
     case 'FETCH_EDIT_PAGES':
       return Object.assign({}, state, {
@@ -11,10 +16,6 @@ export default (state = makeDefaults(), action) => {
     case 'UNLOCK_EDIT_PAGES_SUCCESS':
       return Object.assign({}, state, {
         canEdit: false
-      });
-    case 'EDIT_PAGE_NAME':
-      return Object.assign({}, state, {
-        nameEditable: [...state.nameEditable, action.id]
       });
     case 'ADD_PAGE':
       return Object.assign({}, state, {
@@ -46,6 +47,18 @@ export default (state = makeDefaults(), action) => {
     case 'CANCEL_DELETE_PAGE':
       return Object.assign({}, state, {
         pageToDelete: null
+      });
+    case 'FETCH_DELETE_PAGE_SUCCESS':
+      return Object.assign({}, state, {
+        pageToDelete: null
+      });
+    case 'CANCEL_EDIT_PAGE':
+      index = findIndex(state.editablePages, (id => id === action.id));
+      return Object.assign({}, state, {
+        editablePages: [
+          ...state.editablePages.slice(0, index),
+          ...state.editablePages.slice(index + 1)
+        ]
       });
     default:
       return state;

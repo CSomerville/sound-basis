@@ -2,7 +2,7 @@ import findIndex from 'lodash/findIndex';
 import uuid from 'node-uuid';
 
 export default (state = makeDefaults(), action) => {
-  console.log(action);
+
   let index;
 
   switch (action.type) {
@@ -11,14 +11,6 @@ export default (state = makeDefaults(), action) => {
         pages: action.res.pages,
         subPages: action.res.subPages,
         items: action.res.items
-      });
-    case 'FETCH_EDIT_PAGES':
-      return Object.assign({}, state, {
-        previousPages: action.pages
-      });
-    case 'CANCEL_EDIT_PAGES':
-      return Object.assign({}, state, {
-        pages: previousPages
       });
     case 'UPDATE_PAGE_NAME':
       index = findIndex(state.pages, (page => page.id === action.id));
@@ -57,7 +49,29 @@ export default (state = makeDefaults(), action) => {
         ]
       });
     case 'FETCH_DELETE_PAGE_SUCCESS':
-      return state;
+      index = findIndex(state.pages, (page => page.id === action.id));
+      return Object.assign({}, state, {
+        pages: [
+          ...state.pages.slice(0, index),
+          ...state.pages.slice(index + 1)
+        ]
+      });
+    case 'CAN_EDIT_PAGE':
+      index = findIndex(state.pages, (page => page.id === action.id));
+      return Object.assign({}, state, {
+        previousPages: Object.assign({}, state.previousPages, {
+          [action.id]: state.pages[index]
+        })
+      });
+    case 'CANCEL_EDIT_PAGE':
+      index = findIndex(state.pages, (page => page.id === action.id));
+      return Object.assign({}, state.pages, {
+        pages: [
+          ...state.pages.slice(0, index),
+          state.previousPages[action.id],
+          ...state.pages.slice(index + 1)
+        ]
+      });
     default:
       return state;
   }
@@ -67,7 +81,7 @@ const makeDefaults = () => ({
   pages: [],
   subPages: [],
   items: [],
-  previousPages: []
+  previousPages: {}
 });
 
 const newPage = (hasSubPages, position) => ({

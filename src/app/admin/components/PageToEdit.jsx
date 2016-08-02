@@ -9,7 +9,8 @@ export default class PageToEdit extends Component {
       pageEditable,
       canEditPage,
       pageToggleActive,
-      promptDeletePage
+      promptDeletePage,
+      cancelEditPage
     } = this.props;
 
     return (
@@ -33,6 +34,11 @@ export default class PageToEdit extends Component {
           flavor=""
           copy="delete"
           action={promptDeletePage}
+          />
+        <Button
+          flavor=""
+          copy="cancel"
+          action={cancelEditPage}
           />
       </form>
       :
@@ -59,5 +65,6 @@ PageToEdit.propTypes = {
   pageEditable: PropTypes.bool.isRequired,
   canEditPage: PropTypes.func.isRequired,
   pageToggleActive: PropTypes.func.isRequired,
-  promptDeletePage: PropTypes.func.isRequired
+  promptDeletePage: PropTypes.func.isRequired,
+  cancelEditPage: PropTypes.func.isRequired
 };

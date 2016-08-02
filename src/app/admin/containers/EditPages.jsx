@@ -10,7 +10,7 @@ import {
   fetchUnlockPages,
   fetchDeletePage,
   updatePageName,
-  cancelEditPages,
+  cancelEditPage,
   newHasSubPages,
   newHasNoSubPages,
   cancelAddPage,
@@ -28,7 +28,7 @@ class EditPages extends Component {
     const {
       fetchUnlockPages,
       fetchDeletePage,
-      cancelEditPages,
+      cancelEditPage,
       editPagesGUI,
       pages,
       updatePageName,
@@ -45,9 +45,6 @@ class EditPages extends Component {
     const toolBarConfig = [{
       copy: 'done',
       action: fetchUnlockPages
-    }, {
-      copy: 'cancel',
-      action: cancelEditPages
     }];
 
     return (
@@ -70,6 +67,7 @@ class EditPages extends Component {
               canEditPage={() => canEditPage(page.id)}
               pageToggleActive={() => pageToggleActive(page.id)}
               promptDeletePage={e => { e.preventDefault(); promptDeletePage(page.id); }}
+              cancelEditPage={e => { e.preventDefault(); cancelEditPage(page.id); }}
               />
           )}
         </div>
@@ -110,11 +108,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(fetchUnlockPages());
     browserHistory.push('/admin');
   },
-  cancelEditPages: () => {
-    dispatch(cancelEditPages());
-    dispatch(fetchUnlockPages());
-    browserHistory.push('/admin');
-  },
   updatePageName: (id, name) => dispatch(updatePageName(id, name)),
   cancelEditPages: () => dispatch(cancelEditPages()),
   newHasSubPages: () => dispatch(newHasSubPages()),
@@ -125,7 +118,8 @@ const mapDispatchToProps = dispatch => ({
   pageToggleActive: (id => dispatch(pageToggleActive(id))),
   promptDeletePage: (id => dispatch(promptDeletePage(id))),
   cancelDeletePage: () => dispatch(cancelDeletePage()),
-  fetchDeletePage: (id => dispatch(fetchDeletePage(id)))
+  fetchDeletePage: (id => dispatch(fetchDeletePage(id))),
+  cancelEditPage: (id => dispatch(cancelEditPage(id)))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(EditPages));
