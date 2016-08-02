@@ -35,7 +35,7 @@ module.exports = queries => ({
 
   pagesUpdate: function pagesUpdate(req, res) {
     queries.pageUpdate(req.params.id, req.body.toUpdate)
-      .then(() => res.sendStatus(200))
+      .then(() => res.status(200).json({}))
       .catch(err => res.sendStatus(500)); 
   },
 

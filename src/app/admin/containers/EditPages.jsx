@@ -18,7 +18,8 @@ import {
   canEditPage,
   pageToggleActive,
   promptDeletePage,
-  cancelDeletePage
+  cancelDeletePage,
+  fetchSavePage
 } from '../actions/edit-pages';
 
 class EditPages extends Component {
@@ -39,7 +40,8 @@ class EditPages extends Component {
       canEditPage,
       pageToggleActive,
       promptDeletePage,
-      cancelDeletePage
+      cancelDeletePage,
+      fetchSavePage
     } = this.props;
 
     const toolBarConfig = [{
@@ -68,6 +70,7 @@ class EditPages extends Component {
               pageToggleActive={() => pageToggleActive(page.id)}
               promptDeletePage={e => { e.preventDefault(); promptDeletePage(page.id); }}
               cancelEditPage={e => { e.preventDefault(); cancelEditPage(page.id); }}
+              fetchSavePage={e => { e.preventDefault(); fetchSavePage(page); }}
               />
           )}
         </div>
@@ -119,7 +122,8 @@ const mapDispatchToProps = dispatch => ({
   promptDeletePage: (id => dispatch(promptDeletePage(id))),
   cancelDeletePage: () => dispatch(cancelDeletePage()),
   fetchDeletePage: (id => dispatch(fetchDeletePage(id))),
-  cancelEditPage: (id => dispatch(cancelEditPage(id)))
+  cancelEditPage: (id => dispatch(cancelEditPage(id))),
+  fetchSavePage: (id => dispatch(fetchSavePage(id)))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(EditPages));

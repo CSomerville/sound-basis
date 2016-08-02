@@ -1,4 +1,4 @@
-import { deleteApi } from '../utils/fetch-helpers';
+import { putApi, deleteApi } from '../utils/fetch-helpers';
 
 export const fetchUnlockPages = () => ({
   types: ['FETCH_UNLOCK_PAGES', 'FETCH_UNLOCK_PAGES_SUCCESS', 'FETCH_UNLOCK_PAGES_FAILURE'],
@@ -10,6 +10,20 @@ export const fetchDeletePage = id => ({
   call: () => deleteApi(`/pages/${id}`, {}),
   payload: {
     id: id
+  }
+});
+
+export const fetchSavePage = page => ({
+  types: ['FETCH_SAVE_PAGE', 'FETCH_SAVE_PAGE_SUCCESS', 'FETCH_SAVE_PAGE_FAILURE'],
+  call: () => putApi(`/pages/${page.id}`, {
+    toUpdate: {
+      name: page.name,
+      position: page.position,
+      active: page.active
+    }  
+  }),
+  payload: {
+    id: page.id
   }
 });
 

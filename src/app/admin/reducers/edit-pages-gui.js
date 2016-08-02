@@ -1,7 +1,7 @@
 import findIndex from 'lodash/findIndex';
 
 export default (state = makeDefaults(), action) => {
-
+  console.log(action);
   let index;
 
   switch(action.type) {
@@ -53,6 +53,14 @@ export default (state = makeDefaults(), action) => {
         pageToDelete: null
       });
     case 'CANCEL_EDIT_PAGE':
+      index = findIndex(state.editablePages, (id => id === action.id));
+      return Object.assign({}, state, {
+        editablePages: [
+          ...state.editablePages.slice(0, index),
+          ...state.editablePages.slice(index + 1)
+        ]
+      });
+    case 'FETCH_SAVE_PAGE_SUCCESS':
       index = findIndex(state.editablePages, (id => id === action.id));
       return Object.assign({}, state, {
         editablePages: [
