@@ -8,6 +8,7 @@ import PromptAddPage from '../components/PromptAddPage';
 import PromptDeletePage from '../components/PromptDeletePage';
 import { 
   fetchUnlockPages,
+  fetchDeletePage,
   updatePageName,
   cancelEditPages,
   newHasSubPages,
@@ -26,6 +27,7 @@ class EditPages extends Component {
 
     const {
       fetchUnlockPages,
+      fetchDeletePage,
       cancelEditPages,
       editPagesGUI,
       pages,
@@ -86,7 +88,10 @@ class EditPages extends Component {
         }
         {editPagesGUI.pageToDelete &&
           <PromptDeletePage
-            confirmDeletePage={() => {}}
+            confirmDeletePage={e => { 
+              e.preventDefault(); 
+              fetchDeletePage(editPagesGUI.pageToDelete);
+            }}
             cancelDeletePage={e => { e.preventDefault(); cancelDeletePage(); }}
             />
         }
@@ -119,7 +124,8 @@ const mapDispatchToProps = dispatch => ({
   canEditPage: (id => dispatch(canEditPage(id))),
   pageToggleActive: (id => dispatch(pageToggleActive(id))),
   promptDeletePage: (id => dispatch(promptDeletePage(id))),
-  cancelDeletePage: () => dispatch(cancelDeletePage())
+  cancelDeletePage: () => dispatch(cancelDeletePage()),
+  fetchDeletePage: (id => dispatch(fetchDeletePage(id)))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(EditPages));

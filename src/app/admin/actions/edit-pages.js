@@ -5,6 +5,11 @@ export const fetchUnlockPages = () => ({
   call: () => deleteApi('/pages-locked', {})
 });
 
+export const fetchDeletePage = id => ({
+  types: ['FETCH_DELETE_PAGE', 'FETCH_DELETE_PAGE_SUCCESS', 'FETCH_DELETE_PAGE_FAILURE'],
+  call: () => deleteApi(`/pages/${id}`, {})
+});
+
 export const cancelEditPages = () => ({
   type: 'CANCEL_EDIT_PAGES'
 });

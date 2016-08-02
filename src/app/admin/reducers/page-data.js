@@ -2,7 +2,7 @@ import findIndex from 'lodash/findIndex';
 import uuid from 'node-uuid';
 
 export default (state = makeDefaults(), action) => {
-
+  console.log(action);
   let index;
 
   switch (action.type) {
@@ -56,6 +56,8 @@ export default (state = makeDefaults(), action) => {
           ...state.pages.slice(index + 1)
         ]
       });
+    case 'FETCH_DELETE_PAGE_SUCCESS':
+      return state;
     default:
       return state;
   }
