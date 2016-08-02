@@ -40,3 +40,17 @@ export const newHasNoSubPages = () => ({
 export const cancelAddPage = () => ({
   type: 'CANCEL_ADD_PAGE'
 });
+
+export const promptDeletePage = id => ({
+  type: 'PROMPT_DELETE_PAGE',
+  id: id
+});
+
+export const confirmDeletePage = id => ({
+  type: 'CONFIRM_DELETE_PAGE',
+  id: id
+});
+
+export const cancelDeletePage = () => ({
+  type: 'CANCEL_DELETE_PAGE'
+});

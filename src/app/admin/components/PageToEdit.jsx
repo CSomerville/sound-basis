@@ -8,7 +8,8 @@ export default class PageToEdit extends Component {
       updatePageName,
       pageEditable,
       canEditPage,
-      pageToggleActive
+      pageToggleActive,
+      promptDeletePage
     } = this.props;
 
     return (
@@ -28,6 +29,11 @@ export default class PageToEdit extends Component {
             checked={page.active}
             />
         </label>
+        <Button
+          flavor=""
+          copy="delete"
+          action={promptDeletePage}
+          />
       </form>
       :
       <div>
@@ -52,5 +58,6 @@ PageToEdit.propTypes = {
   updatePageName: PropTypes.func.isRequired,
   pageEditable: PropTypes.bool.isRequired,
   canEditPage: PropTypes.func.isRequired,
-  pageToggleActive: PropTypes.func.isRequired
+  pageToggleActive: PropTypes.func.isRequired,
+  promptDeletePage: PropTypes.func.isRequired
 };

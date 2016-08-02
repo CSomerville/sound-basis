@@ -5,6 +5,7 @@ import NavBar from '../../shared/components/NavBar';
 import PageToEdit from '../components/PageToEdit';
 import Button from '../../shared/components/Button';
 import PromptAddPage from '../components/PromptAddPage';
+import PromptDeletePage from '../components/PromptDeletePage';
 import { 
   fetchUnlockPages,
   updatePageName,
@@ -14,7 +15,9 @@ import {
   cancelAddPage,
   addPage,
   canEditPage,
-  pageToggleActive
+  pageToggleActive,
+  promptDeletePage,
+  cancelDeletePage
 } from '../actions/edit-pages';
 
 class EditPages extends Component {
@@ -32,7 +35,9 @@ class EditPages extends Component {
       newHasNoSubPages,
       cancelAddPage,
       canEditPage,
-      pageToggleActive
+      pageToggleActive,
+      promptDeletePage,
+      cancelDeletePage
     } = this.props;
 
     const toolBarConfig = [{
@@ -62,6 +67,7 @@ class EditPages extends Component {
               pageEditable={editPagesGUI.editablePages.includes(page.id)}
               canEditPage={() => canEditPage(page.id)}
               pageToggleActive={() => pageToggleActive(page.id)}
+              promptDeletePage={e => { e.preventDefault(); promptDeletePage(page.id); }}
               />
           )}
         </div>
@@ -76,6 +82,12 @@ class EditPages extends Component {
             newHasSubPages={newHasSubPages}
             newHasNoSubPages={newHasNoSubPages}
             cancelAddPage={cancelAddPage}
+            />
+        }
+        {editPagesGUI.pageToDelete &&
+          <PromptDeletePage
+            confirmDeletePage={() => {}}
+            cancelDeletePage={e => { e.preventDefault(); cancelDeletePage(); }}
             />
         }
       </div>
@@ -105,8 +117,9 @@ const mapDispatchToProps = dispatch => ({
   cancelAddPage: () => dispatch(cancelAddPage()),
   addPage: () => dispatch(addPage()),
   canEditPage: (id => dispatch(canEditPage(id))),
-  pageToggleActive: (id => dispatch(pageToggleActive(id)))
-
+  pageToggleActive: (id => dispatch(pageToggleActive(id))),
+  promptDeletePage: (id => dispatch(promptDeletePage(id))),
+  cancelDeletePage: () => dispatch(cancelDeletePage())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(EditPages));

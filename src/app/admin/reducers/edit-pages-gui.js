@@ -39,6 +39,14 @@ export default (state = makeDefaults(), action) => {
           action.id
         ]
       });
+    case 'PROMPT_DELETE_PAGE':
+      return Object.assign({}, state, {
+        pageToDelete: action.id
+      });
+    case 'CANCEL_DELETE_PAGE':
+      return Object.assign({}, state, {
+        pageToDelete: null
+      });
     default:
       return state;
   }
@@ -47,5 +55,6 @@ export default (state = makeDefaults(), action) => {
 const makeDefaults = () => ({
   canEdit: false,
   editablePages: [],
-  promptAddPage: false
+  promptAddPage: false,
+  pageToDelete: null
 });
