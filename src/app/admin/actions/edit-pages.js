@@ -5,7 +5,38 @@ export const fetchUnlockPages = () => ({
   call: () => deleteApi('/pages-locked', {})
 });
 
-export const editPageName = id => ({
-  type: 'EDIT_PAGE_NAME',
+export const cancelEditPages = () => ({
+  type: 'CANCEL_EDIT_PAGES'
+});
+
+export const updatePageName = (id, name) => ({
+  type: 'UPDATE_PAGE_NAME',
+  id: id,
+  name: name
+});
+
+export const canEditPage = id => ({
+  type: 'CAN_EDIT_PAGE',
   id: id
+});
+
+export const pageToggleActive = id => ({
+  type: 'PAGE_TOGGLE_ACTIVE',
+  id: id
+});
+
+export const addPage = () => ({
+  type: 'ADD_PAGE'
+});
+
+export const newHasSubPages = () => ({
+  type: 'NEW_HAS_SUB_PAGES'
+});
+
+export const newHasNoSubPages = () => ({
+  type: 'NEW_HAS_NO_SUB_PAGES'
+});
+
+export const cancelAddPage = () => ({
+  type: 'CANCEL_ADD_PAGE'
 });

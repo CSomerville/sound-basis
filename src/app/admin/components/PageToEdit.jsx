@@ -5,23 +5,37 @@ export default class PageToEdit extends Component {
   render() {
     const { 
       page,
-      editPageName,
-      canEditName 
+      updatePageName,
+      pageEditable,
+      canEditPage,
+      pageToggleActive
     } = this.props;
 
     return (
-      (canEditName)
+      (pageEditable)
       ?
-      <div>
-        {page.name} editable
-      </div>
+      <form>
+        <input
+          onChange={(e) => updatePageName(page.id, e.target.value)}
+          type="text"
+          value={page.name}
+          />
+        <label>
+          active?  
+          <input
+            type="checkbox"
+            onChange={pageToggleActive}
+            checked={page.active}
+            />
+        </label>
+      </form>
       :
       <div>
-        {page.name}
+        <p>{page.name}</p>
         <Button
           flavor=""
-          copy="edit name" 
-          action={() => editPageName(page.id)}
+          copy="edit"
+          action={canEditPage} 
           />
       </div>
     );
@@ -35,6 +49,8 @@ PageToEdit.propTypes = {
     name: PropTypes.string,
     id: PropTypes.string
   }).isRequired,
-  editPageName: PropTypes.func.isRequired,
-  canEditName: PropTypes.bool.isRequired
+  updatePageName: PropTypes.func.isRequired,
+  pageEditable: PropTypes.bool.isRequired,
+  canEditPage: PropTypes.func.isRequired,
+  pageToggleActive: PropTypes.func.isRequired
 };

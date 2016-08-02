@@ -1,26 +1,46 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router';
+import { browserHistory, withRouter } from 'react-router';
 import NavBar from '../../shared/components/NavBar';
 import PageToEdit from '../components/PageToEdit';
+import Button from '../../shared/components/Button';
+import PromptAddPage from '../components/PromptAddPage';
 import { 
   fetchUnlockPages,
-  editPageName
+  updatePageName,
+  cancelEditPages,
+  newHasSubPages,
+  newHasNoSubPages,
+  cancelAddPage,
+  addPage,
+  canEditPage,
+  pageToggleActive
 } from '../actions/edit-pages';
 
 class EditPages extends Component {
+
   render() {
 
     const {
       fetchUnlockPages,
+      cancelEditPages,
       editPagesGUI,
       pages,
-      editPageName
+      updatePageName,
+      addPage,
+      newHasSubPages,
+      newHasNoSubPages,
+      cancelAddPage,
+      canEditPage,
+      pageToggleActive
     } = this.props;
 
     const toolBarConfig = [{
       copy: 'done',
       action: fetchUnlockPages
+    }, {
+      copy: 'cancel',
+      action: cancelEditPages
     }];
 
     return (
@@ -38,11 +58,26 @@ class EditPages extends Component {
           {pages.map(page =>
             <PageToEdit key={page.id}
               page={page}
-              editPageName={editPageName}
-              canEditName={editPagesGUI.nameEditable.includes(page.id)}
+              updatePageName={updatePageName}
+              pageEditable={editPagesGUI.editablePages.includes(page.id)}
+              canEditPage={() => canEditPage(page.id)}
+              pageToggleActive={() => pageToggleActive(page.id)}
               />
-            )}
-          </div>
+          )}
+        </div>
+        {(pages.length < 7) && <Button
+          flavor=""
+          copy="+"
+          action={addPage}
+          />
+        }
+        {editPagesGUI.promptAddPage &&
+          <PromptAddPage
+            newHasSubPages={newHasSubPages}
+            newHasNoSubPages={newHasNoSubPages}
+            cancelAddPage={cancelAddPage}
+            />
+        }
       </div>
     );
   }
@@ -58,7 +93,20 @@ const mapDispatchToProps = dispatch => ({
     dispatch(fetchUnlockPages());
     browserHistory.push('/admin');
   },
-  editPageName: (id => dispatch(editPageName(id)))
+  cancelEditPages: () => {
+    dispatch(cancelEditPages());
+    dispatch(fetchUnlockPages());
+    browserHistory.push('/admin');
+  },
+  updatePageName: (id, name) => dispatch(updatePageName(id, name)),
+  cancelEditPages: () => dispatch(cancelEditPages()),
+  newHasSubPages: () => dispatch(newHasSubPages()),
+  newHasNoSubPages: () => dispatch(newHasNoSubPages()),
+  cancelAddPage: () => dispatch(cancelAddPage()),
+  addPage: () => dispatch(addPage()),
+  canEditPage: (id => dispatch(canEditPage(id))),
+  pageToggleActive: (id => dispatch(pageToggleActive(id)))
+
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditPages);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(EditPages));
